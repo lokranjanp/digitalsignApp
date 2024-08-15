@@ -27,6 +27,18 @@ class DigitalSignerApp:
         key = RSA.generate(2048)
         private_key = key.export_key()
         public_key = key.publickey().export_key()
+        # Ask user for directory to save public key
+        pub_key_path = filedialog.asksaveasfilename(defaultextension=".pem",
+                                                    filetypes=[("PEM Files", "*.pem")],
+                                                    title="Save Public Key As",
+                                                    initialfile="public_key.pem")
+        if pub_key_path:
+            with open(pub_key_path, "wb") as pub_file:
+                pub_file.write(public_key)
+            messagebox.showinfo("Success", f"Public key saved as {pub_key_path}.")
+        else:
+            messagebox.showerror("Error", "Public key was not saved.")
+
         return private_key, public_key
 
     def upload_file(self):
@@ -100,5 +112,15 @@ class DigitalSignerApp:
 
 if __name__ == "__main__":
     root = tk.Tk()
+    window_width = root.winfo_width()
+    window_height = root.winfo_height()
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+
+    window_x = int((screen_width / 2) - (window_width / 2))
+    window_y = int((screen_height / 2) - (window_height / 2))
+
+    root.geometry(f"{window_width}x{window_height}+{window_x}+{window_y}")
+    root.resizable(True, True)
     app = DigitalSignerApp(root)
     root.mainloop()
